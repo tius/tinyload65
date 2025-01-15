@@ -1,0 +1,3 @@
+[submodule "makehelper65"]
+	path = makehelper65
+	url = https://github.com/tius/makehelper65.git
