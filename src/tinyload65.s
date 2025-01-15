@@ -92,7 +92,6 @@ irq_handler:                            ; cld is not required for 65c02
 
 ;------------------------------------------------------------------------------
 @brk:   
-    pha
     lda #'B'
 
 .if FEAT_NMI
@@ -110,6 +109,7 @@ nmi_handler:
 .if FEAT_NMI
     pha
     lda #'N'
+    phx
 
 ;------------------------------------------------------------------------------
 ;   handle nmi or brk
@@ -122,7 +122,6 @@ nmi_handler:
 
 .if FEAT_NMI || FEAT_BRK
 _process_interrupt:
-    phx
     phy
     tsx
     phx
