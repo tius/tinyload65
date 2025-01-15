@@ -11,6 +11,8 @@ small serial bootloader for 65xx systems
   * ~220 bytes (full debug support)
 * can be integrated into existing firmware
 
+inspired by urboot and avrdude by Stefan Rueger (<https://github.com/stefanrueger>).
+
 ## status
 
 * target component fully implemented

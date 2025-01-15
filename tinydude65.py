@@ -11,6 +11,7 @@
 #       - minimal implementation of the tinyload65 protocol
 #       - allows testing of bootloader functions
 #       - some code cleanup and refactoring would be nice
+#       - dtr/rts handling based on trial and error, may need adjustment
 #------------------------------------------------------------------------------
 
 import sys
@@ -169,6 +170,7 @@ def main():
     global verbose 
     verbose = args.verbose
 
+    #   open serial port, avoid initial dtr/rts signals
     port = serial.Serial()
     port.port = args.port
     port.baudrate = args.baud
