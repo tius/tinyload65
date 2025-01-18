@@ -47,97 +47,17 @@
 ;   SOFTWARE.
 ;------------------------------------------------------------------------------
 .include "config.inc"
-.include "macros_delay.inc"
 .include "macros_align.inc"
 
-;------------------------------------------------------------------------------
-_OUT_LO := SERIAL_TX_PORT_IDLE ^ (1 << SERIAL_TX_PORT_PIN) 
-_OUT_HI := SERIAL_TX_PORT_IDLE | (1 << SERIAL_TX_PORT_PIN)
-
-;==============================================================================
-.if SERIAL_TX_PORT_PIN = 0
-
-.out "using optimized tx_byte for bit 0"
-;------------------------------------------------------------------------------
-.zeropage
-
-_tmp:   .res 1
-
-.code
-;==============================================================================
-tx_byte:
-;------------------------------------------------------------------------------
-;   in:
-;       A       byte to transmit
-;------------------------------------------------------------------------------
-    sta _tmp                            ; 3
-    lda #_OUT_LO                        ; 2
-    sta SERIAL_TX_PORT                  ; 4     start bit
-    sec                                 ; 2     end of byte marker
-    ror _tmp                            ; 5     _tmp = $80, c = 0
-    DELAY6                              ; 6     
-                                        ; 22    
-
-    ;   repeat 8 times          
-@l0:        
-    adc #$00                            ; 2
-    sta SERIAL_TX_PORT                  ; 4     
-    lda #_OUT_LO                        ; 2
-    lsr a:_tmp                          ; 6     use absolute addressing (!)
-    ASSERT_BRANCH_PAGE bne, @l0         ; 3/2   zero after last data bit
-                                        ; 17    total 135 = 17 * 8 - 1
-
-    lda #_OUT_HI                        ; 2     stop bit
-    nop                                 ; 2
-    sta SERIAL_TX_PORT                  ; 4     
-    rts                                 ; 6
-                                        ; 14
-;   total 171 = 22 + 135 + 14                                                
-
-;==============================================================================
-.else
-
-.out "using default tx_byte"
-;------------------------------------------------------------------------------
-;   in:
-;       A       byte to transmit
-;------------------------------------------------------------------------------
-    phx                                 ; 3
-
-    ;   load x and y with bit masks for hi and lo output
-    ldx #_OUT_LO                        ; 2
-    stx SERIAL_TX_PORT                  ; 4     start bit
-    sec                                 ; 2     end of byte marker
-    ror                                 ; 2
-    DELAY6                              ; 6 
-                                        ; 19    total
-
-;   repeat 8 times  
-@l0:	    
-    bcc @l1		                        ; 3/2 	
-    DELAY1                              ; 1     hack, 65c02 only
-    ldx #_OUT_HI                        ; 2
-    stx	SERIAL_TX_PORT                  ; 4
-    bcs @l2		                        ; 3
-@l1:		                    
-    ldx #_OUT_LO                        ; 2
-    stx SERIAL_TX_PORT                  ; 4			
-    DELAY3                              ; 3
-@l2:		                    
-    lsr			                        ; 2
-    ASSERT_BRANCH_PAGE bne, @l0		    ; 3/2
-                                        ; 17    total 135 = 17 * 8 - 1
-
-    DELAY5                              ; 5
-    ldx #_OUT_HI                        ; 2
-    stx SERIAL_TX_PORT                  ; 4     stop bit
-
-    plx                                 ; 4
-    rts                                 ; 6
-                                        ; 21
-;   total 175 = 19 + 135 + 21
-
+.if SERIAL_TX_USE_MIN
+    .include "tx_byte_min.inc"
 .endif
-;==============================================================================
-
-
+.if SERIAL_TX_USE_OPT
+    .include "tx_byte_opt.inc"
+.endif
+.if SERIAL_TX_USE_DEF
+    .include "tx_byte_def.inc"
+.endif
+.if SERIAL_TX_USE_SAFE
+    .include "tx_byte_safe.inc"                     ; not yet implemented
+.endif

@@ -96,10 +96,14 @@ SERIAL_RX_PORT_PIN  = 7
 ;------------------------------------------------------------------------------
 ;   serial_tx
 
+SERIAL_TX_USE_MIN   = 0                 ; use minimal code, ddr must be $01
+SERIAL_TX_USE_OPT   = 1                 ; use safe code optimized for pin 0
+SERIAL_TX_USE_DEF   = 0                 ; use default code, discards other pins
+SERIAL_TX_USE_SAFE  = 0                 ; use safe code for all pins (tbd)
+
 SERIAL_TX_PORT      = via1_ora
-SERIAL_TX_PORT_IDLE = ORA_IDLE
-SERIAL_TX_PORT_SAVE = 0
 SERIAL_TX_PORT_PIN  = 0
+SERIAL_TX_PORT_IDLE = ORA_IDLE
 
 .global     tx_byte
 ;------------------------------------------------------------------------------
