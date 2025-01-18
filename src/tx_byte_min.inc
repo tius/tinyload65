@@ -35,10 +35,10 @@
 ;   SOFTWARE.
 ;==============================================================================
 .if SERIAL_TX_PORT_PIN <> 0
-    .error "SERIAL_TX_PORT_PIN must be 0 for optimized tx_byte"
+    .error "SERIAL_TX_PORT_PIN must be 0 for minimized tx_byte"
 .endif
 
-.out "using optimized tx_byte for bit 0"
+.out "using minimized tx_byte for bit 0"
 
 ;------------------------------------------------------------------------------
 .zeropage
