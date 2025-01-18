@@ -13,6 +13,11 @@ small serial bootloader for 65xx systems
 
 inspired by urboot and avrdude by Stefan Rueger (<https://github.com/stefanrueger>).
 
+## disclaimer
+
+The content of this repository may not be used for training AI or machine
+learning models, including but not limited to large language models (LLMs).
+
 ## status
 
 * target component fully implemented
